@@ -14,3 +14,12 @@ def sayText(text):
         text = text.decode('utf-8')
     festival._sayText(text)
 
+def setStretchFactor(f):
+    try:
+        f = float(f)
+    except ValueError:
+        raise ValueError("Input parameter must be a float")
+    festival.setStretchFactor(f)
+    
+def execCommand(cmd):
+    festival.execCommand(cmd)

@@ -10,7 +10,30 @@
 #define PyUnicodeObject23 PyUnicodeObject
 #endif
 
-static char _textToWav_doc[] = "_textToWav(test) -> wav (bytes)\n"
+static char setStretchFactor_doc[] = "setStretchFactor(int) -> None";
+static PyObject* setStretchFactor(PyObject* self, PyObject* args) {
+    float stretch_factor;
+    if (!PyArg_ParseTuple(args, "f:setStretchFactor", &stretch_factor)) return NULL;
+    char buffer[40];
+    sprintf(buffer, "(Parameter.set 'Duration_Stretch %.2f)", stretch_factor);
+    festival_eval_command(buffer);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static char execCommand_doc[] = "execCommand(command) -> None\n"
+    "e.g. execCommand(\"(Parameter.set 'Duration_Stretch 1.2)\")";
+static PyObject* execCommand(PyObject* self, PyObject* args) {
+    const char* command;
+    if (!PyArg_ParseTuple(args, "s:execCommand", &command)) return NULL;
+    festival_eval_command(command);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static char _textToWav_doc[] = "_textToWav(text) -> wav (bytes)\n"
     "This is a private method.";
 static PyObject* _textToWav(PyObject* self, PyObject* args) {
     const char* text;
@@ -54,6 +77,8 @@ static char module_doc[] = "Festival Python API";
 static struct PyMethodDef festival_methods[] = {
     {"_sayText", (PyCFunction) _sayText, METH_VARARGS, _sayText_doc},
     {"_textToWav", (PyCFunction) _textToWav, METH_VARARGS, _textToWav_doc},
+    {"execCommand", (PyCFunction) execCommand, METH_VARARGS, execCommand_doc},
+    {"setStretchFactor", (PyCFunction) setStretchFactor, METH_VARARGS, setStretchFactor_doc},
     {NULL, NULL} /* sentinel */ };
 
 #ifndef Py_TYPE
