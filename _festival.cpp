@@ -57,7 +57,7 @@ static struct PyMethodDef festival_methods[] = {
     #define Py_TYPE(ob) (((PyObject*)(ob))->ob_type)
 #endif
 
-static char module_name[] = "_festival";
+static char module_name[] = "festival";
 
 static PyObject *festivalinit(void)
 {
@@ -88,12 +88,12 @@ static PyObject *festivalinit(void)
 }
 
 #if PY_MAJOR_VERSION >= 3
-PyMODINIT_FUNC PyInit__festival(void)
+PyMODINIT_FUNC PyInit_festival(void)
 {
     return festivalinit();
 }
 #else
-PyMODINIT_FUNC init_festival(void)
+PyMODINIT_FUNC initfestival(void)
 {
     festivalinit();
 }
