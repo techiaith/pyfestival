@@ -17,11 +17,14 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
     
     EST_Wave wave;
-    festival_text_to_wave(text, wave);
+    if (!festival_text_to_wave(text, wave)) {
+        PyErr_SetString(PyErr_SetString, "Unable to convert text to wave");
+        return NULL;
+    }
     
     EST_String tmpfile = make_tmp_filename();
     FILE *fp = fopen(tmpfile, "wb");
-    if (wave.save(fp, "nist") != write_ok) {
+    if (wave.save(fp, "riff") != write_ok) {
         fclose(fp);
         remove(tmpfile);
         PyErr_SetString(PyExc_SystemError, "Unable to create wav file");
