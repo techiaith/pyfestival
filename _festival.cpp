@@ -17,11 +17,13 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
     
     EST_Wave wave;
-    festival_text_to_wave("helo world world", wave);
+    festival_text_to_wave(text, wave);
     
     EST_String tmpfile = make_tmp_filename();
     FILE *fp = fopen(tmpfile, "wb");
-    if (!wave.save(fp, "nist")) {
+    if (wave.save(fp, "nist") != write_ok) {
+        fclose(fp);
+        remove(tmpfile);
         PyErr_SetString(PyExc_SystemError, "Unable to create wav file");
         return NULL;
     }
@@ -36,8 +38,8 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
 static char _sayText_doc[] = "_sayText(text) -> None";
 static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
-    if (!PyArg_ParseTuple(args, "_s:sayText", &text)) return NULL;
-    festival_say_text("helo");
+    if (!PyArg_ParseTuple(args, "s:_sayText", &text)) return NULL;
+    festival_say_text(text);
     festival_wait_for_spooler();
     Py_INCREF(Py_None);
     return Py_None;
@@ -81,7 +83,7 @@ static PyObject *festivalinit(void)
     }
     // init festival
     festival_initialize (1, 210000);    
-    festival_eval_command("(set! voice_default voice_cb_cy_llg_diphone)");
+    festival_eval_command("(voice_cb_cy_llg_diphone)");
     return module;
 }
 
