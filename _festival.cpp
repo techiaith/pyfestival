@@ -10,11 +10,11 @@
 #define PyUnicodeObject23 PyUnicodeObject
 #endif
 
-static char _textToWav_doc[] = "textToWav(test) -> wav (bytes)\n"
+static char _textToWav_doc[] = "_textToWav(test) -> wav (bytes)\n"
     "This is a private method.";
 static PyObject* _textToWav(PyObject* self, PyObject* args) {
     const char* text;
-    if (!PyArg_ParseTuple(args, "s:sayText", &text)) return NULL;
+    if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
     
     EST_Wave wave;
     festival_text_to_wave("helo world world", wave);
@@ -33,10 +33,10 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
 
 
 
-static char sayText_doc[] = "sayText(text) -> None";
-static PyObject* sayText(PyObject* self, PyObject* args) {
+static char _sayText_doc[] = "_sayText(text) -> None";
+static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
-    if (!PyArg_ParseTuple(args, "s:sayText", &text)) return NULL;
+    if (!PyArg_ParseTuple(args, "_s:sayText", &text)) return NULL;
     festival_say_text("helo");
     festival_wait_for_spooler();
     Py_INCREF(Py_None);
@@ -47,7 +47,7 @@ static PyObject* sayText(PyObject* self, PyObject* args) {
 
 static char module_doc[] = "Festival Python API";
 static struct PyMethodDef festival_methods[] = {
-    {"sayText", (PyCFunction) sayText, METH_VARARGS, sayText_doc},
+    {"_sayText", (PyCFunction) _sayText, METH_VARARGS, _sayText_doc},
     {"_textToWav", (PyCFunction) _textToWav, METH_VARARGS, _textToWav_doc},
     {NULL, NULL} /* sentinel */ };
 
