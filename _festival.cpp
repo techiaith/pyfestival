@@ -18,7 +18,7 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
     
     EST_Wave wave;
     if (!festival_text_to_wave(text, wave)) {
-        PyErr_SetString(PyErr_SetString, "Unable to convert text to wave");
+        PyErr_SetString(PyExc_SystemError, "Unable to convert text to wave");
         return NULL;
     }
     
