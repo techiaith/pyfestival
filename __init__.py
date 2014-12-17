@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 import os
 
-def textToWav_(text):
+def textToWavFile(text):
     """Returns a filename for a wav file created
     with the text 'text'
     
@@ -28,7 +28,7 @@ def textToWav(text):
     This method may return None if an error occurs
     """
     
-    tmp_path = textToWav_(text)
+    tmp_path = textToWavFile(text)
     try:
         with open(tmp_path, 'rb') as w:
             tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
@@ -45,11 +45,29 @@ def textToMp3(text):
     created with the text 'text'
     
     Use Lame to encode the wav file to an mp3
+
+    The file returned is a temp file. It is removed when closed
     """
 
-    cmd = "lame --quiet -V 9 %s -" % textToWav_(text)
-    return subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    cmd = "lame --quiet -V 9 %s -" % textToWavFile(text)
+    tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
+    
+    tmp_file.write(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
+    tmp_file.seek(0)
+    return tmp_file
 
+def textToMp3File(text):
+    """Returns a filename to an mp3 file created containing
+    audio for the text 'text'
+
+    """
+    filename = textToWavFile(text)
+    try:
+        cmd = "lame --quiet -V9 %s %s.mp3" % (filename, filename)
+        os.system(cmd)
+    finally:
+        os.remove(filename)
+    return filename + ".mp3"
 def sayText(text):
     """Tells festival to say the text 'text'
     
