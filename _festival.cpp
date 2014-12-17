@@ -110,7 +110,7 @@ static PyObject *festivalinit(void)
         return NULL;
     }
     // init festival
-    festival_initialize (1, 210000);    
+    festival_initialize (1, 420000);    
     festival_eval_command("(voice_cb_cy_llg_diphone)");
     return module;
 }
