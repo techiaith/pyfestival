@@ -1,3 +1,4 @@
 *.pyc
 _festival.so
+festival.so
 build
