@@ -48,13 +48,18 @@ def textToMp3(text):
 
     The file returned is a temp file. It is removed when closed
     """
-
-    cmd = "lame --quiet -V 9 %s -" % textToWavFile(text)
-    tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
     
-    tmp_file.write(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
-    tmp_file.seek(0)
-    return tmp_file
+    wav_file = textToWavFile(text)
+    try:
+        cmd = "lame --quiet -V 9 %s -" % wav_file
+        tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
+    
+        tmp_file.write(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
+        tmp_file.seek(0)
+        return tmp_file
+    finally:
+        os.remove(wav_file)
+    return None
 
 def textToMp3File(text):
     """Returns a filename to an mp3 file created containing
