@@ -14,11 +14,11 @@ class FestivalTest(unittest.TestCase):
         self.assertFalse(festival._festival.sayFile("invalid_file.extension"))
 
     def test_say_text(self):
-        self.assertTrue(festival.sayText("helo"))
-        self.assertTrue(festival._festival._sayText("helo"))
+        self.assertTrue(festival.sayText("test one"))
+        self.assertTrue(festival._festival._sayText("test two"))
 
     def test_eval_command(self):
-        self.assertTrue(festival.execCommand("(SayText \"helo\")"))
+        self.assertTrue(festival.execCommand("(SayText \"test command\")"))
 
     def test_set_stretch(self):
         self.assertTrue(festival.setStretchFactor(1))
