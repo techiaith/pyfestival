@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from distutils.core import setup, Extension
 setup(
-    name='festival',
+    name='_festival',
     description='Python Festival module',
     ext_modules=[
         Extension(
-            'festival',
+            '_festival',
             ['_festival.cpp'],
             include_dirs=['/usr/include/festival', '/usr/include/speech_tools'],
             library_dirs=['/usr/lib'],

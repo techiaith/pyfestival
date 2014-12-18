@@ -1,10 +1,13 @@
 
-all: festival.so
+all: _festival.so
 
-festival.so: _festival.cpp
+_festival.so: _festival.cpp
 	CFLAGS="-g" python setup.py build
-	ln -sf build/*/festival*.so festival.so
+	ln -sf build/*/_festival*.so _festival.so
+
+test: all
+	python test.py
 
 clean:
 	python setup.py clean
-	rm -rf build festival.so *.pyc
+	rm -rf build _festival.so *.pyc

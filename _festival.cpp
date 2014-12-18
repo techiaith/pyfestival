@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <festival.h>
-
+#include "festival_extra.h"
 #include "Python.h"
 
 
@@ -58,7 +58,13 @@ if (wave.save(fp, "riff") != write_ok) {
     return filename;
 }
 
-
+static char info_doc[] = "info() -> None\n"
+"Prints out information to stdout on "
+"the current festival version";
+static PyObject* info(PyObject* self) {
+    festival_banner();
+    Py_RETURN_NONE;
+}
 
 static char _sayText_doc[] = "_sayText(text) -> None";
 static PyObject* _sayText(PyObject* self, PyObject* args) {
@@ -78,7 +84,9 @@ static PyObject* sayFile(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s:sayFile", &filename)) return NULL;
 
     bool success = festival_say_file(filename);
-    festival_wait_for_spooler();
+    // The C++ API docs for festival say you should use this to wait for the audio to finish playing
+    // but it seems to cause the audio spooler to die
+    // festival_wait_for_spooler();
     if (success) {
         Py_RETURN_TRUE;
     } else {
@@ -95,13 +103,14 @@ static struct PyMethodDef festival_methods[] = {
     {"execCommand", (PyCFunction) execCommand, METH_VARARGS, execCommand_doc},
     {"setStretchFactor", (PyCFunction) setStretchFactor, METH_VARARGS, setStretchFactor_doc},
     {"sayFile", (PyCFunction) sayFile, METH_VARARGS, sayFile_doc},
+    {"info", (PyCFunction) info, METH_NOARGS, info_doc},
     {NULL, NULL} /* sentinel */ };
 
 #ifndef Py_TYPE
     #define Py_TYPE(ob) (((PyObject*)(ob))->ob_type)
 #endif
 
-static char module_name[] = "festival";
+static char module_name[] = "_festival";
 
 static PyObject *festivalinit(void)
 {
@@ -132,12 +141,12 @@ static PyObject *festivalinit(void)
 }
 
 #if PY_MAJOR_VERSION >= 3
-PyMODINIT_FUNC PyInit_festival(void)
+PyMODINIT_FUNC PyInit__festival(void)
 {
     return festivalinit();
 }
 #else
-PyMODINIT_FUNC initfestival(void)
+PyMODINIT_FUNC init_festival(void)
 {
     festivalinit();
 }
