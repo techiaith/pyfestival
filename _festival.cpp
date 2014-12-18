@@ -10,28 +10,39 @@
 #define PyUnicodeObject23 PyUnicodeObject
 #endif
 
-static char setStretchFactor_doc[] = "setStretchFactor(int) -> None";
+static char setStretchFactor_doc[] = "setStretchFactor(int) -> bool success";
 static PyObject* setStretchFactor(PyObject* self, PyObject* args) {
+    
     float stretch_factor;
     if (!PyArg_ParseTuple(args, "f:setStretchFactor", &stretch_factor)) return NULL;
+    
     char buffer[40];
     sprintf(buffer, "(Parameter.set 'Duration_Stretch %.2f)", stretch_factor);
-    festival_eval_command(buffer);
-    
-    Py_RETURN_NONE;    
+    bool success = festival_eval_command(buffer);
+    if (success) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
 }
 
-static char execCommand_doc[] = "execCommand(command) -> None\n"
+static char execCommand_doc[] = "execCommand(command) -> bool success\n"
     "e.g. execCommand(\"(Parameter.set 'Duration_Stretch 1.2)\")";
 static PyObject* execCommand(PyObject* self, PyObject* args) {
+    
     const char* command;
     if (!PyArg_ParseTuple(args, "s:execCommand", &command)) return NULL;
-    festival_eval_command(command);
     
-    Py_RETURN_NONE;
+    bool success = festival_eval_command(command);
+    
+    if (success) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
 }
 
-static char _textToWav_doc[] = "_textToWav(text) -> wav (bytes)\n"
+static char _textToWav_doc[] = "_textToWav(text) -> unicode filename\n"
     "This is a private method.";
 static PyObject* _textToWav(PyObject* self, PyObject* args) {
     const char* text;
@@ -46,7 +57,7 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
     EST_String tmpfile = make_tmp_filename();
     FILE *fp = fopen(tmpfile, "wb");
     
-if (wave.save(fp, "riff") != write_ok) {
+    if (wave.save(fp, "riff") != write_ok) {
         fclose(fp);
         remove(tmpfile);
         PyErr_SetString(PyExc_SystemError, "Unable to create wav file");
@@ -66,7 +77,7 @@ static PyObject* info(PyObject* self) {
     Py_RETURN_NONE;
 }
 
-static char _sayText_doc[] = "_sayText(text) -> None";
+static char _sayText_doc[] = "_sayText(text) -> bool success";
 static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
     if (!PyArg_ParseTuple(args, "s:_sayText", &text)) return NULL;
@@ -136,7 +147,6 @@ static PyObject *festivalinit(void)
     }
     // init festival
     festival_initialize (1, 420000);    
-    festival_eval_command("(voice_cb_cy_llg_diphone)");
     return module;
 }
 

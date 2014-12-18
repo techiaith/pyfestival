@@ -123,7 +123,7 @@ def setStretchFactor(f):
         f = float(f)
     except ValueError:
         raise ValueError("Input parameter must be a float")
-    _festival.setStretchFactor(f)
+    return _festival.setStretchFactor(f)
     
 def execCommand(cmd):
     """Execute a _festival.command
@@ -133,5 +133,5 @@ def execCommand(cmd):
     
     E.g. execCommand("(SayText \"helo\")")
     """
-    _festival.execCommand(cmd)
+    return _festival.execCommand(cmd)
 
