@@ -73,15 +73,34 @@ def textToMp3File(text):
     finally:
         os.remove(filename)
     return filename + ".mp3"
+
 def sayText(text):
     """Tells festival to say the text 'text'
     
     Only works for machines with a sound card and audio device
     connected. May otherwise return errors
+
+    Returns a boolean indicating if festival succeeded in saying
+    the text
     """
     if not isinstance(text, six.text_type):
         text = text.decode('utf-8')
-    festival._sayText(text)
+    return festival._sayText(text)
+
+def sayFile(filename):
+    """Given a filename, say the contents of the file
+    
+    uses festival_say_file() internally
+
+
+    Returns a boolean indicating if festival succeeded in saying
+    the text
+    """
+
+    if not os.path.exists(filename):
+        raise ValueError("Could not find file %s" % filename);
+
+    return festival.sayFile(filename)
 
 def setStretchFactor(f):
     """Set the stretch factor of the audio to be returned.

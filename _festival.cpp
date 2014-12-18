@@ -18,8 +18,7 @@ static PyObject* setStretchFactor(PyObject* self, PyObject* args) {
     sprintf(buffer, "(Parameter.set 'Duration_Stretch %.2f)", stretch_factor);
     festival_eval_command(buffer);
     
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;    
 }
 
 static char execCommand_doc[] = "execCommand(command) -> None\n"
@@ -29,8 +28,7 @@ static PyObject* execCommand(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s:execCommand", &command)) return NULL;
     festival_eval_command(command);
     
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static char _textToWav_doc[] = "_textToWav(text) -> wav (bytes)\n"
@@ -47,7 +45,8 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
     
     EST_String tmpfile = make_tmp_filename();
     FILE *fp = fopen(tmpfile, "wb");
-    if (wave.save(fp, "riff") != write_ok) {
+    
+if (wave.save(fp, "riff") != write_ok) {
         fclose(fp);
         remove(tmpfile);
         PyErr_SetString(PyExc_SystemError, "Unable to create wav file");
@@ -65,10 +64,26 @@ static char _sayText_doc[] = "_sayText(text) -> None";
 static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
     if (!PyArg_ParseTuple(args, "s:_sayText", &text)) return NULL;
-    festival_say_text(text);
+    bool success = festival_say_text(text);
+    if (success) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
+}
+
+static char sayFile_doc[] = "sayFile(filename) -> bool success";
+static PyObject* sayFile(PyObject* self, PyObject* args) {
+    const char *filename;
+    if (!PyArg_ParseTuple(args, "s:sayFile", &filename)) return NULL;
+
+    bool success = festival_say_file(filename);
     festival_wait_for_spooler();
-    Py_INCREF(Py_None);
-    return Py_None;
+    if (success) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
 }
 ///////////////////////////////////////////////////////////////////////
 // module stuff
@@ -79,6 +94,7 @@ static struct PyMethodDef festival_methods[] = {
     {"_textToWav", (PyCFunction) _textToWav, METH_VARARGS, _textToWav_doc},
     {"execCommand", (PyCFunction) execCommand, METH_VARARGS, execCommand_doc},
     {"setStretchFactor", (PyCFunction) setStretchFactor, METH_VARARGS, setStretchFactor_doc},
+    {"sayFile", (PyCFunction) sayFile, METH_VARARGS, sayFile_doc},
     {NULL, NULL} /* sentinel */ };
 
 #ifndef Py_TYPE
