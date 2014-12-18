@@ -1,5 +1,14 @@
-import _festival
-import six
+try:
+    # module import
+    from . import _festival
+except SystemError:
+    # local import
+    import _festival
+
+# taken from six. Don't want external dependencies
+import sys
+TEXT_TYPE = str if sys.version_info[0] == 3 else unicode
+
 import subprocess
 import tempfile
 import os
@@ -23,7 +32,7 @@ def textToWavFile(text):
     Being given the filename, you are responsible for opening it
     as you see fit, and removing it once done
     """
-    if not isinstance(text, six.text_type):
+    if not isinstance(text, TEXT_TYPE):
         text = text.decode('utf-8')
     return _festival._textToWav(text)
 
@@ -93,7 +102,7 @@ def sayText(text):
     Returns a boolean indicating if _festival.succeeded in saying
     the text
     """
-    if not isinstance(text, six.text_type):
+    if not isinstance(text, TEXT_TYPE):
         text = text.decode('utf-8')
     return _festival._sayText(text)
 
