@@ -34,6 +34,7 @@ def textToWavFile(text):
     """
     if not isinstance(text, TEXT_TYPE):
         text = text.decode('utf-8')
+    
     return _festival._textToWav(text)
 
 def textToWav(text):
@@ -50,7 +51,7 @@ def textToWav(text):
     tmp_path = textToWavFile(text)
     try:
         with open(tmp_path, 'rb') as w:
-            tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
+            tmp_file = tempfile.SpooledTemporaryFile(max_size=4*1024*1024, mode='wb')
             tmp_file.write(w.read())
             tmp_file.seek(0)
         return tmp_file
@@ -71,8 +72,7 @@ def textToMp3(text):
     wav_file = textToWavFile(text)
     try:
         cmd = "lame --quiet -V 9 %s -" % wav_file
-        tmp_file = tempfile.SpooledTemporaryFile(max_size=41000, mode='wb')
-    
+        tmp_file = tempfile.SpooledTemporaryFile(max_size=4*1024*1024, mode='wb')
         tmp_file.write(subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read())
         tmp_file.seek(0)
         return tmp_file
