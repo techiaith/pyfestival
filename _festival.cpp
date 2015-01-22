@@ -145,8 +145,8 @@ static PyObject *festivalinit(void)
     if (module == NULL) {
         return NULL;
     }
-    // init festival - make the heap size 4MB
-    festival_initialize (1, 4*1024*1024);    
+    // init festival - make the heap size 7MB
+    festival_initialize (1, 7*1024*1024);    
     return module;
 }
 
