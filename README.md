@@ -4,7 +4,7 @@ A Python wrapper around the [Festival Speech Synthesis System](http://www.cstr.e
 
 #### Installation
 
-First install the Python, Festival and their headers
+First install the Python, Festival and their headers    
 On Debian:
 
 ```
@@ -16,9 +16,9 @@ Then install using either pip or directly from github:
 ```
 pip install pyfestival
 ```
-or
+or    
 ```
-pip install git+https://git.techiaith.bangor.ac.uk/lleferydd/pyfestival.git#festival
+pip install git+https://github.com/techiaith/pyfestival#festival
 ```    
 
 **Environment Variables**
