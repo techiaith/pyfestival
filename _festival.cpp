@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <festival.h>
-#include "festival_extra.h"
+#include "festival_private.h"
 #include "Python.h"
 
 

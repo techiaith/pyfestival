@@ -1,7 +1,7 @@
 try:
     # module import
     from . import _festival
-except SystemError:
+except (SystemError, ValueError):
     # local import
     import _festival
 
