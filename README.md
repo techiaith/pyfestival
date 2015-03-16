@@ -15,9 +15,12 @@ Then install using either pip or directly from github:
 
 ```
 pip install pyfestival
-# or
-pip install git+https://git.techiaith.bangor.ac.uk/lleferydd/pyfestival.git#festival
 ```
+or
+```
+pip install git+https://git.techiaith.bangor.ac.uk/lleferydd/pyfestival.git#festival
+```    
+
 **Environment Variables**
 
 If your festival/speechtools headers and libs aren't in the standard place, you may need to set the following variables before installing with pip:
