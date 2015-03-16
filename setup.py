@@ -30,7 +30,7 @@ setup(
     name='pyfestival',
     description='Python Festival module',
     long_description=long_description,
-    url="https://pypi.python.org/pypi/pyfestival",
+    url="https://github.com/techiaith/pyfestival",
     author="Patrick Robertson",
     author_email="techiaith@bangor.ac.uk",
     license="BSD",
@@ -45,5 +45,6 @@ setup(
         ),
     ],
     platforms=["*nix"],
+    bugtrack_url="https://github.com/techiaith/pyfestival/issues",
     version="0.5",
 )
