@@ -46,17 +46,26 @@ static char _textToWav_doc[] = "_textToWav(text) -> unicode filename\n"
     "This is a private method.";
 static PyObject* _textToWav(PyObject* self, PyObject* args) {
     const char* text;
-    if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
-    
+    const char* saved_filename;
+
+    EST_String tmpfile;
+    int argc = PyTuple_GET_SIZE(args);
+    if (argc == 1){
+        if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
+        tmpfile = make_tmp_filename();
+    } else {
+        if (!PyArg_ParseTuple(args, "s|s:_textToWav", &text, &saved_filename)) return NULL;
+        tmpfile = saved_filename;
+    }
+
     EST_Wave wave;
     if (!festival_text_to_wave(text, wave)) {
         PyErr_SetString(PyExc_SystemError, "Unable to convert text to wave");
         return NULL;
     }
-    
-    EST_String tmpfile = make_tmp_filename();
+
     FILE *fp = fopen(tmpfile, "wb");
-    
+
     if (wave.save(fp, "riff") != write_ok) {
         fclose(fp);
         remove(tmpfile);
@@ -64,7 +73,7 @@ static PyObject* _textToWav(PyObject* self, PyObject* args) {
         return NULL;
     }
     fclose(fp);
-    
+
     PyObject *filename = PyUnicode_FromStringAndSize((const char *)tmpfile, tmpfile.length());
     return filename;
 }
