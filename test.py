@@ -23,5 +23,11 @@ class FestivalTest(unittest.TestCase):
     def test_set_stretch(self):
         self.assertTrue(festival.setStretchFactor(1))
 
+    def test_save_audio(self):
+        text = "Test three"
+        filename = "./test3.wav"
+        self.assertTrue(festival.textToWavFile(text))
+        self.assertTrue(festival.textToWavFile(text, filename))
+
 if __name__ == '__main__':
     unittest.main()
