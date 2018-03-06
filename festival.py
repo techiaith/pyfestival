@@ -23,10 +23,10 @@ def info():
 
     _festival.info()
 
-def textToWavFile(text):
+def textToWavFile(text, filename=None):
     """Returns a filename for a wav file created
     with the text 'text'
-    
+
     Use this method if you are concerned about removing
     the wav file once you have used it.
     Being given the filename, you are responsible for opening it
@@ -34,30 +34,37 @@ def textToWavFile(text):
     """
     if not isinstance(text, TEXT_TYPE):
         text = text.decode('utf-8')
-    
-    return _festival._textToWav(text)
 
-def textToWav(text):
+    if filename:
+        file = _festival._textToWav(text, filename)
+    else:
+        file = _festival._textToWav(text)
+    return file
+
+
+def textToWav(text, filename=None):
     """Returns a file object for a wav file created with
     the text 'text'
-    
+
     Note: it is your responsibility to remove the file when
     you are finished with it. It is automatically removed
     when you close the file.
-    
+
     This method may return None if an error occurs
     """
-    
-    tmp_path = textToWavFile(text)
+    if filename:
+        tmp_path = textToWavFile(text, filename)
+    else:
+        tmp_path = textToWavFile(text)
     try:
         with open(tmp_path, 'rb') as w:
-            tmp_file = tempfile.SpooledTemporaryFile(max_size=4*1024*1024, mode='wb')
+            tmp_file = tempfile.SpooledTemporaryFile(max_size=4 * 1024 * 1024, mode='wb')
             tmp_file.write(w.read())
             tmp_file.seek(0)
         return tmp_file
     finally:
         os.remove(tmp_path)
-    
+
     return None
     
 def textToMp3(text):
