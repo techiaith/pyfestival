@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from distutils.core import setup, Extension
+from distutils.util import get_platform
 import os
 
 festival_include = os.environ.get("FESTIVAL_INCLUDE", '/usr/include/festival')
@@ -26,6 +27,11 @@ pyfestival creates a C module built on top of the festival source code, making i
 pyfestival supports (and is tested on) Python 2.7+ including Python 3
 """
 
+if get_platform().startswith('macosx-'):
+    macos_frameworks = ['CoreAudio', 'AudioToolbox', 'Carbon']
+else:
+    macos_frameworks = []
+
 setup(
     name='pyfestival',
     description='Python Festival module',
@@ -42,6 +48,7 @@ setup(
             include_dirs=[festival_include, speech_tools_include],
             library_dirs=[festival_lib],
             libraries=['Festival', 'estools', 'estbase', 'eststring'],
+            extra_link_args=[x for name in macos_frameworks for x in ('-framework', name)],
         ),
     ],
     platforms=["*nix"],
