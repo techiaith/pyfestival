@@ -27,11 +27,10 @@ pyfestival creates a C module built on top of the festival source code, making i
 pyfestival supports (and is tested on) Python 2.7+ including Python 3
 """
 
-libraries = ['Festival', 'estools', 'estbase', 'eststring']
+libraries = ['Festival', 'estools', 'estbase', 'eststring', 'ncurses']
 
 if get_platform().startswith('macosx-'):
     macos_frameworks = ['CoreAudio', 'AudioToolbox', 'Carbon']
-    libraries.append('ncurses')
 else:
     macos_frameworks = []
 
