@@ -3,9 +3,9 @@ from distutils.core import setup, Extension
 from distutils.util import get_platform
 import os
 
-festival_include = os.environ.get("FESTIVAL_INCLUDE", '/usr/include/festival')
-speech_tools_include = os.environ.get("SPECCH_INCLUDE", '/usr/include/speech_tools')
-festival_lib = os.environ.get("FESTIVAL_LIB", '/usr/lib')
+festival_include = os.environ.get("FESTIVAL_INCLUDE", '/home/ubuntu/Projects/Fest_test/buildfestival')
+speech_tools_include = os.environ.get("SPECCH_INCLUDE", '/home/ubuntu/Projects/Fest_test/buildspeech_tools')
+festival_lib = os.environ.get("FESTIVAL_LIB", '/home/ubuntu/Projects/Fest_test/build/bin/festival')
 
 festival_classifiers = [
 "Programming Language :: Python :: 2",
