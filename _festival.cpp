@@ -1,3 +1,5 @@
+#include <mutex>
+
 #include <stdio.h>
 #include <festival.h>
 #include "festival_private.h"
@@ -10,6 +12,11 @@
 #define PyUnicodeObject23 PyUnicodeObject
 #endif
 
+/// The lock which guards access to the festival library, and related
+/// calls. This makes calls into this code serialised without relying on the GIL
+/// to do so.
+static std::mutex _lock;
+
 static char setStretchFactor_doc[] = "setStretchFactor(int) -> bool success";
 static PyObject* setStretchFactor(PyObject* self, PyObject* args) {
     
@@ -18,7 +25,15 @@ static PyObject* setStretchFactor(PyObject* self, PyObject* args) {
     
     char buffer[40];
     sprintf(buffer, "(Parameter.set 'Duration_Stretch %.2f)", stretch_factor);
-    bool success = festival_eval_command(buffer);
+    bool success;
+    Py_BEGIN_ALLOW_THREADS
+
+    {
+        const std::lock_guard<std::mutex> lock(_lock);
+        success = festival_eval_command(buffer);
+    }
+
+    Py_END_ALLOW_THREADS
     if (success) {
         Py_RETURN_TRUE;
     } else {
@@ -33,7 +48,15 @@ static PyObject* execCommand(PyObject* self, PyObject* args) {
     const char* command;
     if (!PyArg_ParseTuple(args, "s:execCommand", &command)) return NULL;
     
-    bool success = festival_eval_command(command);
+    bool success;
+    Py_BEGIN_ALLOW_THREADS
+
+    {
+        const std::lock_guard<std::mutex> lock(_lock);
+        success = festival_eval_command(command);
+    }
+
+    Py_END_ALLOW_THREADS
     
     if (success) {
         Py_RETURN_TRUE;
@@ -47,17 +70,31 @@ static char _textToWav_doc[] = "_textToWav(text) -> unicode filename\n"
 static PyObject* _textToWav(PyObject* self, PyObject* args) {
     const char* text;
     if (!PyArg_ParseTuple(args, "s:_textToWav", &text)) return NULL;
-    
+
+    bool success;
     EST_Wave wave;
-    if (!festival_text_to_wave(text, wave)) {
+
+    Py_BEGIN_ALLOW_THREADS
+
+    {
+        const std::lock_guard<std::mutex> lock(_lock);
+        success = festival_text_to_wave(text, wave);
+    }
+
+    Py_END_ALLOW_THREADS
+    if (!success) {
         PyErr_SetString(PyExc_SystemError, "Unable to convert text to wave");
         return NULL;
     }
     
     EST_String tmpfile = make_tmp_filename();
-    FILE *fp = fopen(tmpfile, "wb");
+    FILE *fp;
+    Py_BEGIN_ALLOW_THREADS
+    fp = fopen(tmpfile, "wb");
+    success = (wave.save(fp, "riff") == write_ok);
+    Py_END_ALLOW_THREADS
     
-    if (wave.save(fp, "riff") != write_ok) {
+    if (!success) {
         fclose(fp);
         remove(tmpfile);
         PyErr_SetString(PyExc_SystemError, "Unable to create wav file");
@@ -81,7 +118,17 @@ static char _sayText_doc[] = "_sayText(text) -> bool success";
 static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
     if (!PyArg_ParseTuple(args, "s:_sayText", &text)) return NULL;
-    bool success = festival_say_text(text);
+
+    bool success;
+    Py_BEGIN_ALLOW_THREADS
+
+    {
+        const std::lock_guard<std::mutex> lock(_lock);
+        success = festival_say_text(text);
+    }
+
+    Py_END_ALLOW_THREADS
+
     if (success) {
         Py_RETURN_TRUE;
     } else {
@@ -94,7 +141,15 @@ static PyObject* sayFile(PyObject* self, PyObject* args) {
     const char *filename;
     if (!PyArg_ParseTuple(args, "s:sayFile", &filename)) return NULL;
 
-    bool success = festival_say_file(filename);
+    bool success;
+    Py_BEGIN_ALLOW_THREADS
+
+    {
+        const std::lock_guard<std::mutex> lock(_lock);
+        success = festival_say_file(filename);
+    }
+
+    Py_END_ALLOW_THREADS
     // The C++ API docs for festival say you should use this to wait for the audio to finish playing
     // but it seems to cause the audio spooler to die
     // festival_wait_for_spooler();
@@ -104,6 +159,8 @@ static PyObject* sayFile(PyObject* self, PyObject* args) {
         Py_RETURN_FALSE;
     }
 }
+
+
 ///////////////////////////////////////////////////////////////////////
 // module stuff
 
