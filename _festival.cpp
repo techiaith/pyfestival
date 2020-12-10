@@ -119,15 +119,18 @@ static PyObject* _sayText(PyObject* self, PyObject* args) {
     const char *text;
     if (!PyArg_ParseTuple(args, "s:_sayText", &text)) return NULL;
 
-    bool success;
-    Py_BEGIN_ALLOW_THREADS
+    // Festival doesn't like empty strings, or NULL ones
+    bool success = false;
+    if (text != NULL && text[0] != '\0') {
+        Py_BEGIN_ALLOW_THREADS
 
-    {
-        const std::lock_guard<std::mutex> lock(_lock);
-        success = festival_say_text(text);
+        {
+            const std::lock_guard<std::mutex> lock(_lock);
+            success = festival_say_text(text);
+        }
+
+        Py_END_ALLOW_THREADS
     }
-
-    Py_END_ALLOW_THREADS
 
     if (success) {
         Py_RETURN_TRUE;
