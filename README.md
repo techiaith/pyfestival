@@ -4,14 +4,16 @@ A Python wrapper around the [Festival Speech Synthesis System](http://www.cstr.e
 
 #### Installation
 
-First install the Python, Festival and their headers    
+1. First install the Python, Festival and their headers    
 On Debian:
 
 ```
 sudo apt-get install python python-dev festival festival-dev
 ```
 
-Then install using either pip or directly from github:
+On other operating systems (e.g. macOS) you may need to manually install festival. E.g. [[1]](https://github.com/pettarin/setup-festival-mbrola) or [[2]](https://gist.github.com/laic/519deca91d50b1ed19307d0c80cb788e)
+
+2. Then install using either pip or directly from github:
 
 ```
 pip install pyfestival
