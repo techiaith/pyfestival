@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import setuptools
 from distutils.core import setup, Extension
 from distutils.util import get_platform
 import os
