@@ -55,5 +55,5 @@ setup(
     ],
     platforms=["*nix"],
     bugtrack_url="https://github.com/techiaith/pyfestival/issues",
-    version="0.5",
+    version="0.6",
 )
